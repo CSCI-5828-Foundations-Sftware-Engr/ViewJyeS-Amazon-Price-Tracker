@@ -42,38 +42,37 @@ jobs:
 #          pip install -r requirements.txt
 #          flask --app app run -p 5000
 
-#  DeployDev:
-#    name: Deploy to Dev
+  DeployBackend:
+    name: Deploy to Dev
     
-#    runs-on: ubuntu-latest
-#    environment:
-#      name: Development
-#    needs: [Test-Local]
-#    steps:
+    runs-on: ubuntu-latest
+    environment:
+      name: Development
+    needs: [Test-Local]
+    steps:
 
-#      - name: Deploy
-#        run: echo "I am deploying the api to AWS"
+      - name: Deploy
+        run: echo "I am deploying the api to AWS"
 
-#      - uses: actions/checkout@v2 
-#      - name: Deploy in EC2
-#        env:
-#            PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY  }}
-#            HOSTNAME : ${{ secrets.HOSTNAME  }}
-#            USER_NAME : ${{ secrets.USERNAME  }}
+      - uses: actions/checkout@v2 
+      - name: Deploy in EC2
+        env:
+            PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY  }}
+            HOSTNAME : ${{ secrets.HOSTNAME  }}
+            USER_NAME : ${{ secrets.USERNAME  }}
             
-#        run: |
-#          echo "$IP_DB=127.0.0.1" > ~/.bashrc
-#          source ~/.bashrc
-#          echo "$PRIVATE_KEY"
-#          echo "$PRIVATE_KEY" > private_key.pem
-#          chmod 600 private_key.pem
-#          ssh -o StrictHostKeyChecking=no -i private_key.pem ${USER_NAME}@${HOSTNAME}
-#          git pull
-#          cd ./Backend/Submit-Form/
-#          pip install -r requirements.txt
-#          flask --app app run -p 5000 / flask run --host=0.0.0.0
-#          pkill gunicorn
-#          gunicorn app:app -b 0.0.0.0:5000 --daemon
+        run: |
+          echo "$PRIVATE_KEY"
+          echo "$PRIVATE_KEY" > private_key.pem
+          chmod 600 private_key.pem
+          ssh -o StrictHostKeyChecking=no -i private_key.pem ${USER_NAME}@${HOSTNAME}
+          echo "$secrets.IP_DB" > ~/.bashrc
+          source ~/.bashrc
+          git pull
+          cd ./Backend/Flask/
+          pip install -r requirements.txt
+          pkill gunicorn
+          gunicorn app:app -b 0.0.0.0:5000 --daemon
 
   
   DeployFrontend:
