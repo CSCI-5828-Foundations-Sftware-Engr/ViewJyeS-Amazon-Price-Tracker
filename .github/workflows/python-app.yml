@@ -105,7 +105,7 @@ jobs:
         aws-region           : ${{ env.AWS_REGION_NAME }}        
 
     - name: Copy out Deployment package to S3 bucket
-      run: pwd && cd dist/spa
+      run: pwd && cd dist/spa &&
         aws s3 cp /dist/spa s3://${{ env.EB_PACKAGE_S3_BUCKET_NAME }}
       
     - name: Print message of CI completion
