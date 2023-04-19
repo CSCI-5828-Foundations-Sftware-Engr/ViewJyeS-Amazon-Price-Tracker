@@ -91,10 +91,7 @@ jobs:
            npm i -g @quasar/cli &&
            npm install && echo "running npm install quasar" &&
            quasar -v && echo "after npm and bulding quazar " &&
-           quasar build && echo "done with build"
-           pwd &&
-           ls &&
-           cat package.json
+           quasar build && echo "done with build" 
 
     - name: Configuring my AWS Credentials
       uses: aws-actions/configure-aws-credentials@v2
