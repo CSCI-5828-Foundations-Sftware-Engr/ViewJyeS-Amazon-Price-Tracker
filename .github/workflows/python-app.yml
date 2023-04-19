@@ -71,6 +71,7 @@ jobs:
           ls
           cd ./Backend/flask/
           pip install -r requirements.txt
+          echo "Running gunicorn command"
           pkill gunicorn
           gunicorn app:app -b 0.0.0.0:5000 --daemon
 
