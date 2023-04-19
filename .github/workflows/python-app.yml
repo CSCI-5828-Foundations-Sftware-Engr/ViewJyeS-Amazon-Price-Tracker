@@ -43,7 +43,7 @@ jobs:
 #          flask --app app run -p 5000
 
   DeployBackend:
-    name: Deploy to Dev
+    name: DeployBackend
     
     runs-on: ubuntu-latest
     environment:
@@ -67,8 +67,6 @@ jobs:
           echo "$PRIVATE_KEY" > private_key.pem
           chmod 600 private_key.pem
           ssh -o StrictHostKeyChecking=no -i private_key.pem ${USER_NAME}@${HOSTNAME}
-          echo "$DB_IP_ADDRESS" > ~/.bashrc
-          source ~/.bashrc
           git pull
           cd ./Backend/Flask/
           pip install -r requirements.txt
