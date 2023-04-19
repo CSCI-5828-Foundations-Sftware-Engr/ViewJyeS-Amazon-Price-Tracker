@@ -1,0 +1,185 @@
+<template>
+
+  <p v-if="!card_details.length" style="font-size: 2em; margin: 400px; padding-left: 300px">
+    No items to track
+  </p>
+  <div class="card-grid-container">
+
+    <div v-for="(card, index) in card_details" :key="index" class="row-item">
+      <q-card style="border-radius: 15px;" class="my-card" flat bordered>
+        <q-img style="width: 290px; height: 300px" :src="card.imageUrl"/>
+
+        <q-card-section>
+          <a :href="card.productLink" target="_blank">
+            <q-btn
+              fab
+              color="primary"
+              icon="link"
+              class="absolute"
+              style="top: 0; right: 12px; transform: translateY(-50%);"
+              @click="enableRedirect"
+            >
+            </q-btn>
+          </a>
+
+          <div class="row no-wrap items-center">
+            <div style="margin-top: 8px" class="col text-h6 ellipsis">
+              {{ card.productName }}
+            </div>
+          </div>
+
+        </q-card-section>
+
+        <q-card-section class="q-pt-none">
+          <div class="text-subtitle1">
+            Current Price: {{ card.currentPrice }}$
+          </div>
+          <div class="text-caption text-grey">
+            ASIN: {{ card.asinServer }}
+          </div>
+        </q-card-section>
+
+        <q-separator/>
+
+        <q-card-actions align="evenly">
+          <q-btn  @click="popChange1()" flat color="green">
+            Disable Notification
+          </q-btn>
+<!--          <q-btn @click="popChange1()" flat color="red">-->
+<!--            Enable Notification-->
+<!--          </q-btn>-->
+          <q-btn @click="popChange2(card.asinServer)" flat color="red">
+            Remove Tracking
+          </q-btn>
+        </q-card-actions>
+      </q-card>
+
+      <q-dialog v-model="pop1" persistent transition-show="flip-down" transition-hide="flip-up">
+        <q-card>
+          <q-card-section class="row items-center">
+            <q-avatar icon="notifications" color="primary" text-color="white"/>
+            <span class="q-ml-sm">Are you sure you want to disable notification?</span>
+          </q-card-section>
+
+          <q-card-actions align="right">
+            <q-btn flat label="Cancel" color="primary" v-close-popup/>
+            <q-btn flat label="Toggle Notification" color="primary" v-close-popup/>
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
+
+      <q-dialog v-model="pop2" persistent transition-show="flip-down" transition-hide="flip-up" auto-close>
+        <q-card>
+          <q-card-section class="row items-center">
+            <q-avatar icon="warning" color="primary" text-color="white"/>
+            <span class="q-ml-sm">Are you sure want to remove this tracking</span>
+          </q-card-section>
+
+          <q-card-actions align="right">
+            <q-btn flat label="Cancel" color="primary" v-close-popup/>
+            <q-btn flat @click="removeTracking()" label="Remove Tracking" color="primary" v-close-popup/>
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
+    </div>
+
+  </div>
+
+</template>
+
+<script>
+import {onMounted, ref} from "vue";
+import {useStore} from "vuex";
+import axios from "axios";
+
+export default {
+  name: "AccountLayout",
+  data() {
+    return {};
+  },
+  setup() {
+    const redirectFlag = ref(false);
+    const store = useStore();
+    let card_details = ref([]);
+    const apiRemove = "http://127.0.0.1:5000/remove";
+    const apiFetch = "http://127.0.0.1:5000/fetchCards";
+    let ASIN = ref("");
+    let pop1 = ref(false);
+    let pop2 = ref(false);
+
+    onMounted(() => {
+      loadCardData();
+    });
+
+    function loadCardData() {
+      console.log("in the load card")
+      card_details.value = (store.getters["amazon/getCardDetail"]);
+    }
+
+    const enableRedirect = () => {
+      redirectFlag.value = true;
+    };
+
+    const popChange1 = () => {
+      pop1.value = true
+    };
+
+    const popChange2 = (asin) => {
+      ASIN.value = asin
+      pop2.value = true
+    };
+    const removeTracking = () => {
+      //  get the asin from store.
+      let asin = ASIN.value
+      removeFromDB(asin).then((status) => {
+        console.log(status);
+      });
+      const index = card_details.value.findIndex(item => item.asinServer === asin);
+      store.dispatch("amazon/removeCardIndex", index);
+    };
+
+    const removeFromDB = async (asin) => {
+      try {
+        const response = await axios.put(apiRemove, {
+          asin
+        });
+        return response.data;
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    return {
+      enableRedirect,
+      redirectFlag,
+      card_details,
+      pop1,
+      pop2,
+      removeTracking,
+      popChange1,
+      popChange2,
+      ASIN
+    };
+  }
+};
+</script>
+
+<style scoped>
+.my-card {
+  width: 100%;
+  max-width: 300px;
+}
+
+.card-grid-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  flex-flow: wrap;
+}
+
+.row-item {
+  width: 300px;
+  height: 500px;
+  margin: 20px;
+}
+
+</style>
