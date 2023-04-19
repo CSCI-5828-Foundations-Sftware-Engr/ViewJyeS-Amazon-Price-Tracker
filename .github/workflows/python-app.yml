@@ -69,7 +69,7 @@ jobs:
           ssh -o StrictHostKeyChecking=no -i private_key.pem ${USER_NAME}@${HOSTNAME}
           git pull
           ls
-          cd ./Backend/Flask/
+          cd ./Backend/flask/
           pip install -r requirements.txt
           pkill gunicorn
           gunicorn app:app -b 0.0.0.0:5000 --daemon
