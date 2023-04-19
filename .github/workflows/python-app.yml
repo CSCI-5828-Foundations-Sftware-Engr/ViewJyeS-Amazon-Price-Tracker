@@ -60,13 +60,14 @@ jobs:
             PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY  }}
             HOSTNAME : ${{ secrets.HOSTNAME  }}
             USER_NAME : ${{ secrets.USERNAME  }}
+            DB_IP_ADDRESS: ${{ secrets.IP_DB }}
             
         run: |
           echo "$PRIVATE_KEY"
           echo "$PRIVATE_KEY" > private_key.pem
           chmod 600 private_key.pem
           ssh -o StrictHostKeyChecking=no -i private_key.pem ${USER_NAME}@${HOSTNAME}
-          echo "$secrets.IP_DB" > ~/.bashrc
+          echo "$DB_IP_ADDRESS" > ~/.bashrc
           source ~/.bashrc
           git pull
           cd ./Backend/Flask/
