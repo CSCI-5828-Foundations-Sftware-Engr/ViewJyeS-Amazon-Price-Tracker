@@ -67,7 +67,7 @@ jobs:
           echo "$PRIVATE_KEY" > private_key.pem
           chmod 600 private_key.pem
           ssh -o StrictHostKeyChecking=no -i private_key.pem ${USER_NAME}@${HOSTNAME}
-          export DB_IP_ADDRESS = "$DB_IP_ADDRESS"
+          export DB_IP_ADDRESS="$DB_IP_ADDRESS"
           echo "$DB_IP_ADDRESS" > ~/.bashrc
           echo "DB_IP_ADDRESS "
           echo "$DB_IP_ADDRESS"
