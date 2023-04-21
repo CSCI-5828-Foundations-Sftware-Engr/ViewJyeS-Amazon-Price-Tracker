@@ -46,4 +46,29 @@ describe('SearchTracker.vue', () => {
     put: jest.fn(() => Promise.resolve({ data: 'success' }))
   };
 
+  it('calls setTracker and updates store when track button is clicked with valid input', async () => {
+    const spyStore = jest.spyOn(wrapper.vm.$store, 'dispatch');
+    wrapper.vm.text = 'https://www.amazon.com/dp/B08SBK64QH';
+    wrapper.vm.priceDecrease = false;
+    wrapper.vm.everyHour = true;
+    wrapper.vm.setTracker = mockAxios.put;
+    const trackBtn = wrapper.find('.q-btn');
+    await trackBtn.trigger('click');
+    expect(mockAxios.put).toHaveBeenCalledWith('http://127.0.0.1:5000/track', {
+      link: 'https://www.amazon.com/dp/B08SBK64QH',
+      toggleValue: 1,
+      email: expect.any(String)
+    });
+    expect(spyStore).toHaveBeenCalledWith('amazon/updateCardDetail', 'success');
+    expect(wrapper.vm.$router.currentRoute.value.path).toBe('/account');
+  });
+
+  it('displays an alert when setTracker function throws an error', async () => {
+    window.alert = jest.fn();
+    wrapper.vm.setTracker = jest.fn(() => Promise.reject('Error message'));
+    const trackBtn = wrapper.find('.q-btn');
+    await trackBtn.trigger('click');
+    expect(window.alert).toHaveBeenCalledWith('Error message');
+    expect(wrapper.vm.text).toBe('');
+  });
 });
