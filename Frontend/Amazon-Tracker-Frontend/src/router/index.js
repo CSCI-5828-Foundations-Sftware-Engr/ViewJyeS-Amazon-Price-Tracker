@@ -59,8 +59,8 @@ export default route(function (/* { store, ssrContext } */) {
     });
   };
 
-  const apiUrl = "http://127.0.0.1:5000/login";
-  const apiUrl1 = "http://127.0.0.1:5000/fetchCards";
+  const apiUrl = "http://13.57.224.247:5000/login";
+  const apiUrl1 = "http://13.57.224.247:5000/fetchCards";
 
   const getFullNameFromDB = async (email) => {
     console.log("in the db function");

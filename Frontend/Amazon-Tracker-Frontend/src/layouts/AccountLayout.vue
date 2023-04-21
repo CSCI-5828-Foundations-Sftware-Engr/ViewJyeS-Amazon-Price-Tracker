@@ -42,12 +42,12 @@
         <q-separator/>
 
         <q-card-actions align="evenly">
-          <q-btn  @click="popChange1()" flat color="green">
+          <q-btn v-if="toggleStatus" @click="popChange1(card.asinServer)" flat color="green">
             Disable Notification
           </q-btn>
-<!--          <q-btn @click="popChange1()" flat color="red">-->
-<!--            Enable Notification-->
-<!--          </q-btn>-->
+          <q-btn v-if="!toggleStatus" @click="popChange1(card.asinServer)" flat color="red">
+            Enable Notification
+          </q-btn>
           <q-btn @click="popChange2(card.asinServer)" flat color="red">
             Remove Tracking
           </q-btn>
@@ -63,7 +63,7 @@
 
           <q-card-actions align="right">
             <q-btn flat label="Cancel" color="primary" v-close-popup/>
-            <q-btn flat label="Toggle Notification" color="primary" v-close-popup/>
+            <q-btn flat @click="toggleTracking()" label="Toggle Notification" color="primary" v-close-popup/>
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -101,11 +101,13 @@ export default {
     const redirectFlag = ref(false);
     const store = useStore();
     let card_details = ref([]);
-    const apiRemove = "http://127.0.0.1:5000/remove";
-    const apiFetch = "http://127.0.0.1:5000/fetchCards";
+    const apiRemove = "http://13.57.224.247:5000/remove";
+    const apiToggle = "http://13.57.224.247:5000/toggleNotification";
     let ASIN = ref("");
     let pop1 = ref(false);
     let pop2 = ref(false);
+
+    let toggleStatus = ref(true);
 
     onMounted(() => {
       loadCardData();
@@ -120,7 +122,8 @@ export default {
       redirectFlag.value = true;
     };
 
-    const popChange1 = () => {
+    const popChange1 = (asin) => {
+      ASIN.value = asin
       pop1.value = true
     };
 
@@ -136,11 +139,33 @@ export default {
       });
       const index = card_details.value.findIndex(item => item.asinServer === asin);
       store.dispatch("amazon/removeCardIndex", index);
+      pop2.value = false;
+    };
+
+    const toggleTracking = () => {
+
+      let asin = ASIN.value
+      toggleFromDB(asin).then((status) => {
+        console.log(status);
+      });
+      toggleStatus.value = !toggleStatus.value;
+      pop1.value = false;
     };
 
     const removeFromDB = async (asin) => {
       try {
         const response = await axios.put(apiRemove, {
+          asin
+        });
+        return response.data;
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    const toggleFromDB = async (asin) => {
+      try {
+        const response = await axios.put(apiToggle, {
           asin
         });
         return response.data;
@@ -157,7 +182,9 @@ export default {
       removeTracking,
       popChange1,
       popChange2,
-      ASIN
+      ASIN,
+      toggleTracking,
+      toggleStatus
     };
   }
 };

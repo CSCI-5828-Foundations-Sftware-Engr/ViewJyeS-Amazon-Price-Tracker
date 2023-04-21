@@ -62,7 +62,7 @@ export default {
     const loading = ref([
       false
     ]);
-    const apiUrl = "http://127.0.0.1:5000/track";
+    const apiUrl = "http://13.57.224.247:5000/track";
     const router = useRouter();
     const priceDecrease = ref(true);
     const everyHour = ref(false);
@@ -90,6 +90,9 @@ export default {
           console.log(data);
           store.dispatch("amazon/updateCardDetail", data);
           router.push("/account");
+        }).catch((error) =>{
+          alert(error);
+          this.text = "";
         });
         // simulate a delay
         setTimeout(() => {
@@ -112,7 +115,9 @@ export default {
         });
         return response.data;
       } catch (error) {
-        console.error(error);
+        const errMsg = error.response.data.error;
+        console.error(errMsg);
+        return Promise.reject(errMsg)
       }
     };
 
