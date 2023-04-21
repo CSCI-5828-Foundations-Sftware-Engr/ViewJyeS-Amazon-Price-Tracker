@@ -13,4 +13,13 @@ export default {
   transform: {
     '.*\\.js$': 'babel-jest',
   },
+  coveragePathIgnorePatterns: [
+    "/node_modules/",
+    "/src/boot/firebase.js", // add the path to the file you want to exclude
+    "/src/boot/axios.js",
+    "/src/pages/",
+    "/src/router/",
+    "/src/store/",
+    "/src/App.vue"
+  ]
 };
