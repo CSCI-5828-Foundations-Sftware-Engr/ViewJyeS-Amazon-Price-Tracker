@@ -65,13 +65,6 @@ module.exports = configure(function (ctx) {
       'material-icons', // optional, you are not bound to it
     ],
 
-    preset: '@quasar/jest-preset',
-    transform: {
-      '^.+\\.vue$': 'vue-jest',
-      '.+\\.(css|styl|less|sass|scss|png|jpg|ttf|woff|woff2)$': 'jest-transform-stub',
-    },
-    snapshotSerializers: ['jest-serializer-vue'],
-
     // Full list of options: https://v2.quasar.dev/quasar-cli-webpack/quasar-config-js#Property%3A-build
     build: {
       vueRouterMode: 'hash', // available values: 'hash', 'history'
