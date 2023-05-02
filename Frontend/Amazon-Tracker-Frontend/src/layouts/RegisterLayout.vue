@@ -30,7 +30,7 @@
           placeholder="password123"
         />
       </div>
-      <q-item to="/sign-in">
+      <q-item to="/">
         <q-item-label> Already an user? Login Here!!</q-item-label>
       </q-item>
       <p v-if="errMsg">{{ errMsg }}</p>

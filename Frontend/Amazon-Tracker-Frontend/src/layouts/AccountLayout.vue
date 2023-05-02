@@ -6,6 +6,8 @@
   <div class="card-grid-container">
 
     <div v-for="(card, index) in card_details" :key="index" class="row-item">
+      <p>{{index}}</p>
+      <p>{{ card }}</p>
       <q-card style="border-radius: 15px;" class="my-card" flat bordered>
         <q-img style="width: 290px; height: 300px" :src="card.imageUrl"/>
 
@@ -42,12 +44,12 @@
         <q-separator/>
 
         <q-card-actions align="evenly">
-          <q-btn  @click="popChange1()" flat color="green">
+          <q-btn v-if="!card.notification_status" @click="popChange1(card.asinServer, index)" flat color="green">
             Disable Notification
           </q-btn>
-<!--          <q-btn @click="popChange1()" flat color="red">-->
-<!--            Enable Notification-->
-<!--          </q-btn>-->
+          <q-btn v-if="card.notification_status" @click="popChange1(card.asinServer, index)" flat color="red">
+            Enable Notification
+          </q-btn>
           <q-btn @click="popChange2(card.asinServer)" flat color="red">
             Remove Tracking
           </q-btn>
@@ -63,7 +65,7 @@
 
           <q-card-actions align="right">
             <q-btn flat label="Cancel" color="primary" v-close-popup/>
-            <q-btn flat label="Toggle Notification" color="primary" v-close-popup/>
+            <q-btn flat @click="toggleTracking()" label="Toggle Notification" color="primary" v-close-popup/>
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -102,10 +104,13 @@ export default {
     const store = useStore();
     let card_details = ref([]);
     const apiRemove = "http://127.0.0.1:5000/remove";
-    const apiFetch = "http://127.0.0.1:5000/fetchCards";
+    const apiToggle = "http://127.0.0.1:5000/toggleNotification";
     let ASIN = ref("");
     let pop1 = ref(false);
     let pop2 = ref(false);
+    let ind = ref(0);
+
+    let toggleStatus = ref(true);
 
     onMounted(() => {
       loadCardData();
@@ -120,13 +125,16 @@ export default {
       redirectFlag.value = true;
     };
 
-    const popChange1 = () => {
+    const popChange1 = (asin, index) => {
+      ASIN.value = asin
       pop1.value = true
+      ind.value = index;
     };
 
-    const popChange2 = (asin) => {
+    const popChange2 = (asin, index) => {
       ASIN.value = asin
       pop2.value = true
+      ind.value = index;
     };
     const removeTracking = () => {
       //  get the asin from store.
@@ -136,6 +144,18 @@ export default {
       });
       const index = card_details.value.findIndex(item => item.asinServer === asin);
       store.dispatch("amazon/removeCardIndex", index);
+      pop2.value = false;
+    };
+
+    const toggleTracking = () => {
+
+      let asin = ASIN.value
+      toggleFromDB(asin).then((status) => {
+        console.log(status);
+      });
+      console.log(ind.value)
+      store.dispatch("amazon/toggleNotification", ind.value);
+      pop1.value = false;
     };
 
     const removeFromDB = async (asin) => {
@@ -148,16 +168,30 @@ export default {
         console.error(error);
       }
     };
+
+    const toggleFromDB = async (asin) => {
+      try {
+        const response = await axios.put(apiToggle, {
+          asin
+        });
+        return response.data;
+      } catch (error) {
+        console.error(error);
+      }
+    };
     return {
       enableRedirect,
       redirectFlag,
+      ind,
       card_details,
       pop1,
       pop2,
       removeTracking,
       popChange1,
       popChange2,
-      ASIN
+      ASIN,
+      toggleTracking,
+      toggleStatus
     };
   }
 };

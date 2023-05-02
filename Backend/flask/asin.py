@@ -1,4 +1,4 @@
-#!/bin/env python
+ #!/usr/bin/env python3
 
 from urllib.parse import urlparse
 import smtplib
@@ -56,7 +56,7 @@ def api_call():
     current_price = response_list[0]['current_price']
 
     # Print the asin value
-    current_price = str(current_price)
+    current_price = float(current_price)
 
     return current_price
 
@@ -73,7 +73,10 @@ def get_from_db():
 
     # Fetch the results
     result = cursor.fetchone()
-    return str(result[0]), str(result[1])
+    return float(result[0]), str(result[1])
+    # final_data = json.loads(result)
+    # print(final_data)
+    # return final_data[0]['curr_price'], final_data[0]['product_name']
 
 def send_email(body):
     subject = 'Price change Alert!!!'
@@ -94,9 +97,11 @@ def send_email(body):
 if notification_type == 0:
     new_price = api_call()
     curr_price, product_name = get_from_db()
+    print(curr_price)
+    print(product_name)
     body = '''
     Hello user there is a price decrease for 
-    ''' + product_name + " its current price is: " + new_price + "$"
+    ''' + product_name + " its current price is: " + str(new_price) + "$"
     # if(new_price < curr_price):
     update_db(new_price)
     send_email(body)

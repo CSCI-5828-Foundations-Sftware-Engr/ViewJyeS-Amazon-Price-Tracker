@@ -29,14 +29,63 @@
       </button>
     </form>
   </div>
+
+  <div style="position: relative;top:730px;">
+    <q-timeline style="margin-bottom: 50px;" :layout="layout" color="secondary">
+      <q-timeline-entry heading>
+        Features
+        <br>
+      </q-timeline-entry>
+
+      <q-timeline-entry
+        title="Tracking"
+        side="left"
+        icon="analytics"
+        color="red"
+      >
+        <div>
+          Simple and use to get started. Copy the link for the product you want to track.
+        </div>
+      </q-timeline-entry>
+
+      <q-timeline-entry
+        title="Toggle Notification"
+        side="right"
+        color="blue"
+        icon="notifications"
+      >
+        <div>
+          Enable and disable the notification service to have fine grain control over the tracking.
+        </div>
+      </q-timeline-entry>
+
+      <q-timeline-entry
+        title="Types of Notifications"
+        side="left"
+        color="green"
+        icon="format_list_bulleted"
+      >
+        <div>
+          Select between getting notified every 12 hours or when the product price drops.
+        </div>
+      </q-timeline-entry>
+
+      <q-timeline-entry heading>Enjoy</q-timeline-entry>
+
+
+    </q-timeline>
+  </div>
+
+
 </template>
 
 <script>
-import {ref} from "vue";
+import {computed, ref} from "vue";
 import {getAuth, GoogleAuthProvider, signInWithEmailAndPassword, signInWithPopup} from "firebase/auth" ;
 import {useRouter} from "vue-router";
 import axios from "axios";
 import {useStore} from "vuex";
+import {useQuasar} from "quasar";
 
 export default {
   name: "SignIn",
@@ -48,7 +97,7 @@ export default {
     const auth = getAuth();
     const apiUrl = "http://127.0.0.1:5000/login";
     const apiUrl1 = "http://127.0.0.1:5000/fetchCards";
-
+    const $q = useQuasar();
     const store = useStore();
 
     const signInUser = () => {
@@ -129,7 +178,10 @@ export default {
       signInWithGoogle,
       email,
       password,
-      errMsg
+      errMsg,
+      layout: computed(() => {
+        return $q.screen.lt.sm ? 'dense' : ($q.screen.lt.md ? 'comfortable' : 'loose')
+      })
     };
   }
 };

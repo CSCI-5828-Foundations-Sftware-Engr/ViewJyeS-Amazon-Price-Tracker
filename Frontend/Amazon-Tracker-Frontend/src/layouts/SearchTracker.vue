@@ -90,6 +90,9 @@ export default {
           console.log(data);
           store.dispatch("amazon/updateCardDetail", data);
           router.push("/account");
+        }).catch((error) =>{
+          alert(error);
+          this.text = "";
         });
         // simulate a delay
         setTimeout(() => {
@@ -112,7 +115,9 @@ export default {
         });
         return response.data;
       } catch (error) {
-        console.error(error);
+        const errMsg = error.response.data.error;
+        console.error(errMsg);
+        return Promise.reject(errMsg)
       }
     };
 

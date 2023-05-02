@@ -37,21 +37,6 @@ export default route(function (/* { store, ssrContext } */) {
         getAuth(),
         (user) => {
           removeListener()
-          // console.log("when login while refreshing")
-          // let email = getAuth().currentUser.email;
-          // const store = useStore();
-          //
-          // getFullNameFromDB(email).then((curr_name) => {
-          //   store.dispatch("amazon/updateFullName", curr_name);
-          // });
-          //
-          // getCardsInStore(email).then((card_detail) => {
-          //   if (card_detail.length !== 0) {
-          //     for (let i = 0; i < card_detail.length; i++) {
-          //       store.dispatch("amazon/updateCardDetail", card_detail[i]);
-          //     }
-          //   }
-          // });
           resolve(user)
         },
         reject

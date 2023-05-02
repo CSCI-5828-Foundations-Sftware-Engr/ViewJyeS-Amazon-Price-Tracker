@@ -2,15 +2,11 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 const routes = [
   {
-    path: "/",
-    component: () => import("layouts/MainLayout.vue")
-  },
-  {
     path: "/register",
     component: () => import("layouts/RegisterLayout.vue")
   },
   {
-    path: "/sign-in",
+    path: "/",
     component: () => import("layouts/SignIn.vue")
   },
   {
