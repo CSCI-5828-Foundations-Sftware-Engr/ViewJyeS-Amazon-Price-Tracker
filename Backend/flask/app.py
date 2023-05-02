@@ -6,6 +6,7 @@ from crontab import CronTab
 import subprocess
 import requests
 import json
+import os
 
 
 output = subprocess.check_output(['pwd'])
@@ -14,19 +15,19 @@ output_str = output.decode('utf-8').split('\n')
 output_u = subprocess.check_output(['whoami'])
 output_user = output_u.decode('utf-8').split('\n')
 
+IP_DB = str(os.environ.get('IP_DB'))
+
 #set the crontab and cmd to run 
 cron = CronTab(user=output_user[0])
 
 # Establish a connection to the database
 mydb = mysql.connector.connect(
-  host="127.0.0.1",
+  host=IP_DB,
   user="akhil",
   password="akhil@05",
   database="amazon_tracker"
 )
 
-# Create a cursor object to execute the query
-cursor = mydb.cursor()
 
 app = Flask(__name__)
 CORS(app)
@@ -37,6 +38,8 @@ def hello_world():
 
 @app.route('/register', methods=['PUT'])
 def register():
+    # Create a cursor object to execute the query
+    cursor = mydb.cursor()
     email = request.json['email']
     full_name = request.json['fullName']
 
@@ -52,12 +55,15 @@ def register():
     # Commit the changes to the database
     mydb.commit()
 
+    cursor.close()
     # Print a message to confirm the insert was successful
     print(cursor.rowcount, "record inserted.")
     return "<p>Content updated</p>"
 
 @app.route('/login', methods=['PUT'])
 def login():
+        # Create a cursor object to execute the query
+    cursor = mydb.cursor()
     # for getting the full name for the user
     email = request.json['email']
 
@@ -68,93 +74,116 @@ def login():
 
     # Get the current price from the first row of the query results
     full_name = cursor.fetchone()[0]
+
+    cursor.close()
     return jsonify({'full_name': full_name})
 
 @app.route('/track', methods=['PUT'])
 def track():
-    #var 
-    link = request.json['link']
-    toggleValue = int(request.json['toggleValue'])
-    email = request.json['email']
-    enableNotification = 0
+    try:
+        # Create a cursor object to execute the query
+        cursor = mydb.cursor()
 
-    # Get the ASIN for the product
-    url = link 
-    parsed_url = urlparse(url)
-    path_segments = parsed_url.path.split('/')
-    #var
-    asin = path_segments[3]
+        #var 
+        link = request.json['link']
+        toggleValue = int(request.json['toggleValue'])
+        email = request.json['email']
+        enableNotification = 0
 
-    #one time API call outside the cron-job
-    url_api = "https://amazon-product-price-data.p.rapidapi.com/product"
+        # Get the ASIN for the product
+        url = link 
+        parsed_url = urlparse(url)
+        path_segments = parsed_url.path.split('/')
+        #var
+        asin = path_segments[3]
 
-    querystring = {"asins":asin,"locale":"US"}
+        #one time API call outside the cron-job
+        url_api = "https://amazon-product-price-data.p.rapidapi.com/product"
 
-    headers = {
-        "X-RapidAPI-Key": "9ed674538amshdcb9838f5a86f98p11ff43jsnbbfd1b11af6d",
-        "X-RapidAPI-Host": "amazon-product-price-data.p.rapidapi.com"
-    }
+        querystring = {"asins":asin,"locale":"US"}
 
-    response = requests.request("GET", url_api, headers=headers, params=querystring)
+        headers = {
+            "X-RapidAPI-Key": "9ed674538amshdcb9838f5a86f98p11ff43jsnbbfd1b11af6d",
+            "X-RapidAPI-Host": "amazon-product-price-data.p.rapidapi.com"
+        }
 
-    print(response.content)
+        response = requests.request("GET", url_api, headers=headers, params=querystring)
 
-    decoded_response = response.content.decode('utf-8')
+        print(response.content)
 
-    # Parse the JSON string into a Python object (in this case, a list)
-    response_list = json.loads(decoded_response)
+        decoded_response = response.content.decode('utf-8')
 
-    # Access the asin value of the first item in the list
-    current_price = response_list[0]['current_price']
-    image_url = response_list[0]['image_url']
-    product_name = response_list[0]['product_name']
+        # Parse the JSON string into a Python object (in this case, a list)
+        response_list = json.loads(decoded_response)
 
-    # Print the asin value
-    current_price = str(current_price)
-    image_url = str(image_url)
-    product_name = str(product_name)
-    tog_val = str(toggleValue)
+        # Access the asin value of the first item in the list
+        current_price = response_list[0]['current_price']
+        image_url = response_list[0]['image_url']
+        product_name = response_list[0]['product_name']
 
-    cmd = 'python3 ' + output_str[0] + '/asin.py ' + asin + ' ' + email + ' ' + tog_val
+        # Print the asin value
+        current_price = str(current_price)
+        image_url = str(image_url)
+        product_name = str(product_name)
+        tog_val = str(toggleValue)
 
-    #insert all the values in the DB
-    # Define the insert statement
-    sql = "INSERT INTO email_tracker (email, ASIN, amazon_link, product_name, image_link, cron_command, curr_price, notification_status, type_of_notification) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
+        cmd = '/usr/bin/python3 ' + output_str[0] + '/asin.py ' + asin + ' ' + email + ' ' + tog_val
 
-    # Define the values to insert
-    values = (email, asin, link, product_name, image_url, cmd, current_price, enableNotification, toggleValue)
+        #insert all the values in the DB
+        # Define the insert statement
+        sql = "INSERT INTO email_tracker (email, ASIN, amazon_link, product_name, image_link, cron_command, curr_price, notification_status, type_of_notification) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
 
-    # Execute the insert statement with the values
-    cursor.execute(sql, values)
+        # Define the values to insert
+        values = (email, asin, link, product_name, image_url, cmd, current_price, enableNotification, toggleValue)
 
-    # Commit the changes to the database
-    mydb.commit()
+        # Execute the insert statement with the values
+        cursor.execute(sql, values)
 
-    if toggleValue == 0:
-        #create the cron-job
-        job = cron.new(command=cmd)
-        job.minute.every(1)
-    elif toggleValue == 1:
-        #create the cron-job
-        job = cron.new(command=cmd)
-        job.hour.every(12)
+        print("will this line get printed")
+        # Commit the changes to the database
+        mydb.commit()
+        print("will this line get printed after")
 
-    # write the cron job to the cron tab
-    cron.write()
-    print('Cron job created')
-    
-    return jsonify({'email':email, 'productName':product_name,'asinServer': asin,
-                    'imageUrl': image_url, 'currentPrice': current_price, 'productLink': link})
+
+        cursor.close()
+
+        if toggleValue == 0:
+            #create the cron-job
+            job = cron.new(command=cmd)
+            job.minute.every(1)
+        elif toggleValue == 1:
+            #create the cron-job
+            job = cron.new(command=cmd)
+            job.hour.every(12)
+
+        # write the cron job to the cron tab
+        cron.write()
+        print('Cron job created')
+        
+        return jsonify({'email':email,'notification_status': enableNotification ,'productName':product_name,'asinServer': asin,
+                        'imageUrl': image_url, 'currentPrice': current_price, 'productLink': link})
+    except mysql.connector.IntegrityError as e:
+        cursor.close()
+        # Handle the IntegrityError exception here
+        return jsonify({'error': str("There is already a tracking set for this product")}), 500
+    # except mysql.connector.Error as e:
+    #     # Handle any other MySQL related exceptions here
+    #     print("MySQL Error:", e)
 
 
 @app.route('/fetchCards', methods=['PUT'])
 def fetchCards():
+
+        # Create a cursor object to execute the query
+    cursor = mydb.cursor()
+
     email = request.json['email']
     # Execute a SELECT statement with a WHERE clause to retrieve the desired data
     cursor.execute("SELECT ASIN, amazon_link, product_name, image_link, curr_price FROM email_tracker WHERE email = %s", (email,))
 
     # Fetch all rows of the resultset
     resultset = cursor.fetchall()
+    
     rows = []
     for row in resultset:
         rows.append({
@@ -165,7 +194,8 @@ def fetchCards():
             "currentPrice": str(row[4]),
             "productLink": row[1]
         })
-
+    
+    cursor.close()
     # Convert the list of dictionaries into a JSON object
     json_data = json.dumps(rows)
 
@@ -176,10 +206,61 @@ def fetchCards():
 
 @app.route('/toggleNotification', methods=['PUT'])
 def toggleNotification():
-    pass
+    asin = request.json['asin']
+        # Create a cursor object to execute the query
+    cursor = mydb.cursor()
+
+    # Get the command to remove.
+
+    sqlCommand = "SELECT notification_status, cron_command, type_of_notification FROM email_tracker WHERE ASIN = %s"
+    cursor.execute(sqlCommand, (asin,))
+
+    results1 = cursor.fetchall()
+
+    for row in results1:
+        notificationStatus = int(row[0])
+        cron_command = str(row[1])
+        typeOfNotification = int(row[2])
+
+    if (notificationStatus): # to enable to notificaion.
+        notificationStatus = not notificationStatus
+
+        if typeOfNotification:
+            job = cron.new(command=cron_command)
+            job.hour.every(12)
+        else:
+            job = cron.new(command=cron_command)
+            job.minute.every(1)
+
+        sql = "UPDATE email_tracker SET notification_status = %s WHERE ASIN = %s"
+        values = (notificationStatus, asin)
+        cursor.execute(sql, values)
+        # Commit the changes to the database
+        mydb.commit()
+
+    else:   # to disable notification.
+        notificationStatus = not notificationStatus
+    
+        #  remove the job
+        job_to_remove = cron.find_command(cron_command) 
+        cron.remove(job_to_remove)
+
+        sql = "UPDATE email_tracker SET notification_status = %s WHERE ASIN = %s"
+        values = (notificationStatus, asin)
+        cursor.execute(sql, values)
+        # Commit the changes to the database
+        mydb.commit()
+
+
+    cron.write()
+    cursor.close()
+    return "<p>Status changed</p>"
+
 
 @app.route('/remove', methods=['PUT'])
 def remove():
+        # Create a cursor object to execute the query
+    cursor = mydb.cursor()
     asin = request.json['asin']
 
     # Get the command to remove.
@@ -200,5 +281,7 @@ def remove():
     cursor.execute(sql, (asin,))
     # Commit the changes to the database
     mydb.commit()
+
+    cursor.close()
 
     return "<p>Content removed</p>"

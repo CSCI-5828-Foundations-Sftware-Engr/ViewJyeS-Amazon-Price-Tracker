@@ -4,6 +4,9 @@ const state = {
   card_detail: []
 };
 const mutations = {
+  setToggleNotification(state, index){
+    state.card_detail[index].notification_status = !state.card_detail[index].notification_status
+  },
   setEmail(state, email) {
     state.email = email;
   },
@@ -35,6 +38,9 @@ const actions = {
   },
   removeCardIndex({commit}, index) {
     commit("removeCard", index)
+  },
+  toggleNotification({commit}, index){
+    commit("setToggleNotification", index);
   }
 };
 const getters = {

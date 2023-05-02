@@ -1,5 +1,5 @@
 <template>
-  <q-layout view="lHh Lpr lff" class="shadow-2 rounded-borders">
+  <q-layout view="lHh Lpr lff" class="rounded-borders">
     <q-header elevated class="bg-cyan-8">
       <q-toolbar>
         <q-toolbar-title class="text-center">Amazon Price Tracker</q-toolbar-title>
@@ -15,16 +15,6 @@
     >
       <q-scroll-area style="height: calc(100% - 150px); margin-top: 150px; border-right: 1px solid #ddd">
         <q-list padding>
-          <q-item to="/" replace clickable v-ripple v-if="!isLoggedIn">
-            <q-item-section avatar>
-              <q-icon name="home" />
-            </q-item-section>
-
-            <q-item-section>
-              Home
-            </q-item-section>
-          </q-item>
-
           <q-item to="/search" replace clickable v-ripple v-if="isLoggedIn">
             <q-item-section avatar>
               <q-icon name="search" />
@@ -45,7 +35,7 @@
             </q-item-section>
           </q-item>
 
-          <q-item to="/sign-in" replace clickable v-ripple v-if="!isLoggedIn">
+          <q-item to="/" replace clickable v-ripple v-if="!isLoggedIn">
             <q-item-section avatar>
               <q-icon name="login" />
             </q-item-section>

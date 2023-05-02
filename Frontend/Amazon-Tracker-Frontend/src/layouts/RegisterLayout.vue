@@ -30,7 +30,7 @@
           placeholder="password123"
         />
       </div>
-      <q-item to="/sign-in">
+      <q-item to="/">
         <q-item-label> Already an user? Login Here!!</q-item-label>
       </q-item>
       <p v-if="errMsg">{{ errMsg }}</p>
@@ -57,7 +57,7 @@ export default {
     const router = useRouter();
     const auth = getAuth();
     const errMsg = ref();
-    const apiUrl = "http://13.57.224.247:5000/register";
+    const apiUrl = "http://127.0.0.1:5000/register";
     const store = useStore();
     const registerUser = () => {
       createUserWithEmailAndPassword(auth, email.value, password.value)

@@ -6,6 +6,8 @@
   <div class="card-grid-container">
 
     <div v-for="(card, index) in card_details" :key="index" class="row-item">
+      <p>{{index}}</p>
+      <p>{{ card }}</p>
       <q-card style="border-radius: 15px;" class="my-card" flat bordered>
         <q-img style="width: 290px; height: 300px" :src="card.imageUrl"/>
 
@@ -42,10 +44,10 @@
         <q-separator/>
 
         <q-card-actions align="evenly">
-          <q-btn v-if="toggleStatus" @click="popChange1(card.asinServer)" flat color="green">
+          <q-btn v-if="!card.notification_status" @click="popChange1(card.asinServer, index)" flat color="green">
             Disable Notification
           </q-btn>
-          <q-btn v-if="!toggleStatus" @click="popChange1(card.asinServer)" flat color="red">
+          <q-btn v-if="card.notification_status" @click="popChange1(card.asinServer, index)" flat color="red">
             Enable Notification
           </q-btn>
           <q-btn @click="popChange2(card.asinServer)" flat color="red">
@@ -101,11 +103,12 @@ export default {
     const redirectFlag = ref(false);
     const store = useStore();
     let card_details = ref([]);
-    const apiRemove = "http://13.57.224.247:5000/remove";
-    const apiToggle = "http://13.57.224.247:5000/toggleNotification";
+    const apiRemove = "http://127.0.0.1:5000/remove";
+    const apiToggle = "http://127.0.0.1:5000/toggleNotification";
     let ASIN = ref("");
     let pop1 = ref(false);
     let pop2 = ref(false);
+    let ind = ref(0);
 
     let toggleStatus = ref(true);
 
@@ -122,14 +125,16 @@ export default {
       redirectFlag.value = true;
     };
 
-    const popChange1 = (asin) => {
+    const popChange1 = (asin, index) => {
       ASIN.value = asin
       pop1.value = true
+      ind.value = index;
     };
 
-    const popChange2 = (asin) => {
+    const popChange2 = (asin, index) => {
       ASIN.value = asin
       pop2.value = true
+      ind.value = index;
     };
     const removeTracking = () => {
       //  get the asin from store.
@@ -148,7 +153,8 @@ export default {
       toggleFromDB(asin).then((status) => {
         console.log(status);
       });
-      toggleStatus.value = !toggleStatus.value;
+      console.log(ind.value)
+      store.dispatch("amazon/toggleNotification", ind.value);
       pop1.value = false;
     };
 
@@ -176,6 +182,7 @@ export default {
     return {
       enableRedirect,
       redirectFlag,
+      ind,
       card_details,
       pop1,
       pop2,
