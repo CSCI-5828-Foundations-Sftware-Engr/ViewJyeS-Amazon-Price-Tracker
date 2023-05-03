@@ -15,7 +15,7 @@ notification_type = int(sys.argv[3])
 
 #email configuration
 email_sender = 'sharedflix6@gmail.com'
-email_password = 'xcixzanpouqkyink'
+email_password = 'elrssdzbodiqfimv'
 email_receiver = email
 
 

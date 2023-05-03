@@ -57,7 +57,6 @@ import { useStore } from "vuex";
 
 export default {
   name: "SearchTracker",
-
   setup() {
     const loading = ref([
       false
@@ -89,6 +88,7 @@ export default {
         setTracker(this.text, toggleValue, store.getters["amazon/getEmail"]).then((data) => {
           console.log(data);
           store.dispatch("amazon/updateCardDetail", data);
+          store.dispatch("amazon/updateTrackToggle");
           router.push("/account");
         }).catch((error) =>{
           alert(error);
@@ -126,6 +126,7 @@ export default {
       priceDecrease,
       everyHour,
       loading,
+      store,
       simulateProgress,
       changeToggle1,
       changeToggle2

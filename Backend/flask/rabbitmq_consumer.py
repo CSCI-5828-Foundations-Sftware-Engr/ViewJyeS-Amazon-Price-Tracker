@@ -7,7 +7,6 @@ import warnings
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 import matplotlib.pyplot as plt
-from wordcloud import WordCloud
 import nltk
 import ssl
 from sklearn.metrics import accuracy_score

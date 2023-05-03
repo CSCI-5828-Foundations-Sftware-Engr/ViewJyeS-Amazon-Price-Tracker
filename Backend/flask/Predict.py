@@ -5,18 +5,18 @@ import requests
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 import matplotlib.pyplot as plt
-from wordcloud import WordCloud
 import nltk
 import ssl
 from sklearn.metrics import accuracy_score
+
 try:
     _create_unverified_https_context = ssl._create_unverified_context
 except AttributeError:
     pass
 else:
     ssl._create_default_https_context = _create_unverified_https_context
-# nltk.download('punkt')
-# nltk.download('stopwords')
+nltk.download('punkt')
+nltk.download('stopwords')
 from nltk.corpus import stopwords
 from sklearn.linear_model import LogisticRegression
 
@@ -69,7 +69,7 @@ def predict():
             channel.queue_declare(queue='output_queue')
 
             channel.basic_publish(exchange='',
-                        routing_key='my_queue',
+                        routing_key='output_queue',
                                                body=message)
 
             connection.close()
@@ -83,5 +83,3 @@ def get_percentage(pred):
     percent_ones = round(num_ones/total * 100, 2)
     print(percent_zeros, percent_ones)
     return percent_zeros, percent_ones
-
-predict()

@@ -3,88 +3,96 @@
   <p v-if="!card_details.length" style="font-size: 2em; margin: 400px; padding-left: 300px">
     No items to track
   </p>
-  <div class="card-grid-container">
+  <div  class="graph-container" style="display: flex; flex-direction: column; align-items: center; flex-wrap: wrap">
+    <div class="card-grid-container">
+      <div v-for="(card, index) in card_details" :key="index" class="row-item">
+        <div>
+          <q-card style="border-radius: 15px;" class="my-card" flat bordered>
+            <q-img style="width: 290px; height: 300px" :src="card.imageUrl"/>
 
-    <div v-for="(card, index) in card_details" :key="index" class="row-item">
-      <p>{{index}}</p>
-      <p>{{ card }}</p>
-      <q-card style="border-radius: 15px;" class="my-card" flat bordered>
-        <q-img style="width: 290px; height: 300px" :src="card.imageUrl"/>
+            <q-card-section>
+              <a :href="card.productLink" target="_blank">
+                <q-btn
+                  fab
+                  color="primary"
+                  icon="link"
+                  class="absolute"
+                  style="top: 0; right: 12px; transform: translateY(-50%);"
+                  @click="enableRedirect"
+                >
+                </q-btn>
+              </a>
 
-        <q-card-section>
-          <a :href="card.productLink" target="_blank">
-            <q-btn
-              fab
-              color="primary"
-              icon="link"
-              class="absolute"
-              style="top: 0; right: 12px; transform: translateY(-50%);"
-              @click="enableRedirect"
-            >
-            </q-btn>
-          </a>
+              <div class="row no-wrap items-center">
+                <div style="margin-top: 8px" class="col text-h6 ellipsis">
+                  {{ card.productName }}
+                </div>
+              </div>
 
-          <div class="row no-wrap items-center">
-            <div style="margin-top: 8px" class="col text-h6 ellipsis">
-              {{ card.productName }}
-            </div>
+            </q-card-section>
+
+            <q-card-section class="q-pt-none">
+              <div class="text-subtitle1">
+                Current Price: {{ card.currentPrice }}$
+              </div>
+              <div class="text-caption text-grey">
+                ASIN: {{ card.asinServer }}
+              </div>
+            </q-card-section>
+
+            <q-separator/>
+
+            <q-card-actions align="evenly">
+              <q-btn v-if="!card.notification_status" @click="popChange1(card.asinServer, index)" flat color="green">
+                Disable Notification
+              </q-btn>
+              <q-btn v-if="card.notification_status" @click="popChange1(card.asinServer, index)" flat color="red">
+                Enable Notification
+              </q-btn>
+              <q-btn @click="popChange2(card.asinServer)" flat color="red">
+                Remove Tracking
+              </q-btn>
+            </q-card-actions>
+
+
+          </q-card>
+          <div style="width: 300px; height: 300px; margin-top: 50px;">
+            <canvas :ref="'pieChart_' + index"></canvas>
           </div>
+        </div>
 
-        </q-card-section>
 
-        <q-card-section class="q-pt-none">
-          <div class="text-subtitle1">
-            Current Price: {{ card.currentPrice }}$
-          </div>
-          <div class="text-caption text-grey">
-            ASIN: {{ card.asinServer }}
-          </div>
-        </q-card-section>
 
-        <q-separator/>
+        <q-dialog v-model="pop1" persistent transition-show="flip-down" transition-hide="flip-up">
+          <q-card>
+            <q-card-section class="row items-center">
+              <q-avatar icon="notifications" color="primary" text-color="white"/>
+              <span class="q-ml-sm">Are you sure you want to disable notification?</span>
+            </q-card-section>
 
-        <q-card-actions align="evenly">
-          <q-btn v-if="!card.notification_status" @click="popChange1(card.asinServer, index)" flat color="green">
-            Disable Notification
-          </q-btn>
-          <q-btn v-if="card.notification_status" @click="popChange1(card.asinServer, index)" flat color="red">
-            Enable Notification
-          </q-btn>
-          <q-btn @click="popChange2(card.asinServer)" flat color="red">
-            Remove Tracking
-          </q-btn>
-        </q-card-actions>
-      </q-card>
+            <q-card-actions align="right">
+              <q-btn flat label="Cancel" color="primary" v-close-popup/>
+              <q-btn flat @click="toggleTracking()" label="Toggle Notification" color="primary" v-close-popup/>
+            </q-card-actions>
+          </q-card>
+        </q-dialog>
 
-      <q-dialog v-model="pop1" persistent transition-show="flip-down" transition-hide="flip-up">
-        <q-card>
-          <q-card-section class="row items-center">
-            <q-avatar icon="notifications" color="primary" text-color="white"/>
-            <span class="q-ml-sm">Are you sure you want to disable notification?</span>
-          </q-card-section>
+        <q-dialog v-model="pop2" persistent transition-show="flip-down" transition-hide="flip-up" auto-close>
+          <q-card>
+            <q-card-section class="row items-center">
+              <q-avatar icon="warning" color="primary" text-color="white"/>
+              <span class="q-ml-sm">Are you sure want to remove this tracking</span>
+            </q-card-section>
 
-          <q-card-actions align="right">
-            <q-btn flat label="Cancel" color="primary" v-close-popup/>
-            <q-btn flat @click="toggleTracking()" label="Toggle Notification" color="primary" v-close-popup/>
-          </q-card-actions>
-        </q-card>
-      </q-dialog>
+            <q-card-actions align="right">
+              <q-btn flat label="Cancel" color="primary" v-close-popup/>
+              <q-btn flat @click="removeTracking()" label="Remove Tracking" color="primary" v-close-popup/>
+            </q-card-actions>
+          </q-card>
+        </q-dialog>
 
-      <q-dialog v-model="pop2" persistent transition-show="flip-down" transition-hide="flip-up" auto-close>
-        <q-card>
-          <q-card-section class="row items-center">
-            <q-avatar icon="warning" color="primary" text-color="white"/>
-            <span class="q-ml-sm">Are you sure want to remove this tracking</span>
-          </q-card-section>
-
-          <q-card-actions align="right">
-            <q-btn flat label="Cancel" color="primary" v-close-popup/>
-            <q-btn flat @click="removeTracking()" label="Remove Tracking" color="primary" v-close-popup/>
-          </q-card-actions>
-        </q-card>
-      </q-dialog>
+      </div>
     </div>
-
   </div>
 
 </template>
@@ -93,13 +101,29 @@
 import {onMounted, ref} from "vue";
 import {useStore} from "vuex";
 import axios from "axios";
+import Chart from 'chart.js/auto';
 
 export default {
   name: "AccountLayout",
   data() {
     return {};
   },
+  mounted() {
+    let tog = this.store.getters["amazon/getTrackToggle"]
+    console.log(tog);
+    if (tog == true) {
+      console.log("ideal");
+      let d = this.store.getters["amazon/getChartData"];
+      if (d.length > 0) {
+        this.demoFunction(false);
+      }
+      this.getData(tog);
+    } else {
+      this.demoFunction(tog);
+    }
+  },
   setup() {
+    let finalChartData = ref([]);
     const redirectFlag = ref(false);
     const store = useStore();
     let card_details = ref([]);
@@ -109,6 +133,7 @@ export default {
     let pop1 = ref(false);
     let pop2 = ref(false);
     let ind = ref(0);
+    let chartInstances = ref([]);
 
     let toggleStatus = ref(true);
 
@@ -186,13 +211,87 @@ export default {
       card_details,
       pop1,
       pop2,
+      store,
+      chartInstances,
       removeTracking,
       popChange1,
       popChange2,
       ASIN,
       toggleTracking,
-      toggleStatus
+      toggleStatus,
+      finalChartData
     };
+  },
+  methods: {
+    async getData(tog) {
+      console.log("in this even called")
+      axios.get('http://127.0.0.1:5001/add')
+        .then((response) => {
+          console.log('Data:', response.data);
+          let chartData = response.data;
+          let demo = chartData.map(str => JSON.parse(str));
+          this.store.dispatch("amazon/updateChartData", demo[0]);
+          this.demoFunction(tog);
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+        });
+    },
+    demoFunction(tog) {
+      console.log("in the demo function");
+      this.finalChartData = this.store.getters["amazon/getChartData"];
+      console.log(this.finalChartData);
+      if (tog) {
+        console.log("inside tog");
+        this.store.dispatch("amazon/updateTrackToggle");
+        let dd = this.store.getters["amazon/getChartData"];
+        let index = dd.length - 1;
+        console.log(index);
+        setTimeout(() => {
+
+          const ctx = this.$refs[`pieChart_${index}`][0].getContext('2d');
+          console.log("whats my index", index);
+          this.chartInstances[index] = new Chart(ctx, {
+            type: 'pie',
+            data: {
+              labels: ['Positive', 'Negative'],
+              datasets: [
+                {
+                  data: [this.finalChartData[index][1], this.finalChartData[index][0]],
+                  backgroundColor: ['#29AB87', '#ff726f'],
+                },
+              ],
+            },
+          });
+        }, 200);
+      } else {
+        setTimeout(() => {
+          this.finalChartData.forEach((card, index) => {
+            const ctx = this.$refs[`pieChart_${index}`][0].getContext('2d');
+            console.log("whats my index", index);
+            // check if a chart instance already exists for this canvas
+            if (this.chartInstances[index]) {
+              // if it does, destroy the existing instance
+              this.chartInstances[index].destroy();
+            }
+
+            // create a new chart instance and add it to the chartInstances array
+            this.chartInstances[index] = new Chart(ctx, {
+              type: 'pie',
+              data: {
+                labels: ['Positive', 'Negative'],
+                datasets: [
+                  {
+                    data: [this.finalChartData[index][1], this.finalChartData[index][0]],
+                    backgroundColor: ['#29AB87', '#ff726f'],
+                  },
+                ],
+              },
+            });
+          });
+        }, 200);
+      }
+    }
   }
 };
 </script>
@@ -212,8 +311,7 @@ export default {
 
 .row-item {
   width: 300px;
-  height: 500px;
-  margin: 20px;
+  margin: 80px  20px 20px 20px;
 }
 
 </style>

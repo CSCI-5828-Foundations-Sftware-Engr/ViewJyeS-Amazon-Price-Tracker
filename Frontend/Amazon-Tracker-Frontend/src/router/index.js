@@ -44,32 +44,7 @@ export default route(function (/* { store, ssrContext } */) {
     });
   };
 
-  const apiUrl = "http://127.0.0.1:5000/login";
-  const apiUrl1 = "http://127.0.0.1:5000/fetchCards";
 
-  const getFullNameFromDB = async (email) => {
-    console.log("in the db function");
-    try {
-      const response = await axios.put(apiUrl, {
-        email
-      });
-      console.log(response.data.full_name); // logs the response from the server
-      return response.data.full_name;
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  const getCardsInStore = async (email) => {
-    try {
-      const response = await axios.put(apiUrl1, {
-        email
-      });
-      return response.data;
-    } catch (error) {
-      console.error(error);
-    }
-  };
 
   Router.beforeEach(async (to, from, next)=>{
     if (to.matched.some((record) => record.meta.requiresAuth)) {

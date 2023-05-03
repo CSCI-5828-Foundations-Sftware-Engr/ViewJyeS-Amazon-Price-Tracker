@@ -1,7 +1,9 @@
 const state = {
   email: null,
   full_name: "User Not Logged In",
-  card_detail: []
+  card_detail: [],
+  chartData: [],
+  trackToggle: false
 };
 const mutations = {
   setToggleNotification(state, index){
@@ -18,12 +20,22 @@ const mutations = {
   },
   setCardEmpty(state, card_empty) {
     state.card_detail = card_empty
+    state.chartData = []
   },
   removeCard(state, index) {
     state.card_detail.splice(index, 1);
+  },
+  setChartData(state, chartData){
+    state.chartData.push(chartData);
+  },
+  setTrackToggle(state){
+    state.trackToggle = !state.trackToggle;
   }
 };
 const actions = {
+  updateChartData({commit}, chartData){
+    commit("setChartData", chartData);
+  },
   updateEmailId({commit}, email) {
     commit("setEmail", email);
   },
@@ -41,6 +53,9 @@ const actions = {
   },
   toggleNotification({commit}, index){
     commit("setToggleNotification", index);
+  },
+  updateTrackToggle({commit}){
+    commit("setTrackToggle")
   }
 };
 const getters = {
@@ -52,6 +67,12 @@ const getters = {
   },
   getCardDetail(state) {
     return state.card_detail;
+  },
+  getChartData(state){
+    return state.chartData;
+  },
+  getTrackToggle(state){
+    return state.trackToggle;
   }
 };
 

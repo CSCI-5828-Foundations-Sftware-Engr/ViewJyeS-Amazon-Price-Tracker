@@ -7,6 +7,8 @@ import subprocess
 import requests
 import json
 import os
+import subprocess
+
 
 
 output = subprocess.check_output(['pwd'])
@@ -73,10 +75,13 @@ def login():
     cursor.execute(select_query, (email, ))
 
     # Get the current price from the first row of the query results
+    # cursor.fetchall()
     full_name = cursor.fetchone()[0]
+    cursor.nextset() 
 
     cursor.close()
     return jsonify({'full_name': full_name})
+
 
 @app.route('/track', methods=['PUT'])
 def track():
@@ -159,8 +164,17 @@ def track():
         # write the cron job to the cron tab
         cron.write()
         print('Cron job created')
+
+        with open('output.txt', 'a') as f:
+            print("inside with")
+            subprocess.Popen(['python', 'rabbitmq.py', asin], stdout=f)
+
+
+        with open('output1.txt', 'a') as f:
+            print("inside with")
+            subprocess.Popen(['python', 'rabbitmq_consumer.py'], stdout=f)
         
-        return jsonify({'email':email,'notification_status': enableNotification ,'productName':product_name,'asinServer': asin,
+        return jsonify({'email':email,'positive': 100,'negative': 0,'notification_status': enableNotification ,'productName':product_name,'asinServer': asin,
                         'imageUrl': image_url, 'currentPrice': current_price, 'productLink': link})
     except mysql.connector.IntegrityError as e:
         cursor.close()
@@ -179,10 +193,11 @@ def fetchCards():
 
     email = request.json['email']
     # Execute a SELECT statement with a WHERE clause to retrieve the desired data
-    cursor.execute("SELECT ASIN, amazon_link, product_name, image_link, curr_price FROM email_tracker WHERE email = %s", (email,))
+    cursor.execute("SELECT ASIN, amazon_link, product_name, image_link, curr_price, notification_status FROM email_tracker WHERE email = %s", (email,))
 
     # Fetch all rows of the resultset
     resultset = cursor.fetchall()
+    cursor.nextset() 
     
     rows = []
     for row in resultset:
@@ -192,7 +207,10 @@ def fetchCards():
             "asinServer": row[0],
             "imageUrl": row[3],
             "currentPrice": str(row[4]),
-            "productLink": row[1]
+            "productLink": row[1],
+            "notification_status": int(row[5]),
+            "postive": 100,
+            "negative": 0
         })
     
     cursor.close()

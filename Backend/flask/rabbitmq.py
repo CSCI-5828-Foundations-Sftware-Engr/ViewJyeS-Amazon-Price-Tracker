@@ -1,10 +1,22 @@
 import pika
 import requests
 import json
+import sys
+
 # import func_api.py
 # Establish connection
 connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
 channel = connection.channel()
+
+
+# sys args
+asin = sys.argv[1]
+print(asin)
+# Open the file for appending
+with open('file.txt', 'a') as f:
+    # Append some text to the file
+    f.write('\nThis is a new line.')
+
 
 # Declare a queue
 
@@ -16,7 +28,7 @@ def api_call():
     params = {
       'page': '1',
       'domainCode': 'com',
-      'asin': 'B0BS9J6Q9M',
+      'asin': asin,
       'sortBy': 'recent',
       'filters': 'reviewerType=avp_only_reviews;filterByStar=five_star'
     }
@@ -31,14 +43,6 @@ def api_call():
     if response.status_code == 200:
 #         print(response.json()['reviews'][0]['text'])
         reviews = response.json().get('reviews', [])
-#         for review in reviews:
-#             message = review.get('text')
-#             if message:
-#                     # Publish message to RabbitMQ queue
-#                     channel.basic_publish(exchange='',
-#                         routing_key='my_queue',
-#                                                body=message)
-#                     print(f"Published message to RabbitMQ: {message}")
         if reviews:
             temp=[]
             message=[]

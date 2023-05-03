@@ -14,6 +14,7 @@ def on_message_received (ch, method, properties, body):
     main_message.append(data1)
     print(data1)
     print(type(data1))
+    ch.queue_purge('output_queue')
     ch.connection.close()
 
 @app.route('/add')
@@ -22,9 +23,9 @@ def get_my_data():
     channel = connection.channel()
 
     # Declare a queue
-    channel.queue_declare(queue='my_queue')
+    channel.queue_declare(queue='output_queue')
 
-    channel.basic_consume(queue='my_queue', auto_ack=True, on_message_callback=on_message_received)
+    channel.basic_consume(queue='output_queue', auto_ack=True, on_message_callback=on_message_received)
 
     print("Starting consuming")
 

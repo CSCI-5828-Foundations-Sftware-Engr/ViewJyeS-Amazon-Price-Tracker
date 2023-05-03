@@ -1,7 +1,7 @@
 <template>
 
   <div class="container" id="content">
-    <form>
+    <form @submit.prevent>
       <h2 class="mb-3">SignUp</h2>
       <div class="input">
         <label for="email">Full Name</label>
@@ -60,8 +60,10 @@ export default {
     const apiUrl = "http://127.0.0.1:5000/register";
     const store = useStore();
     const registerUser = () => {
+      console.log("kaha hoo")
       createUserWithEmailAndPassword(auth, email.value, password.value)
         .then((data) => {
+         console.log(data);
           console.log("Successfully registered!");
           store.dispatch('amazon/updateFullName',fullName.value)
           store.dispatch('amazon/updateEmailId',email.value)
@@ -85,19 +87,8 @@ export default {
         console.error(error);
       }
     };
-    const signInWithGoogle = () => {
-      const provider = new GoogleAuthProvider();
-      signInWithPopup(getAuth(), provider).then((result) => {
-        console.log(result.user);
-        router.push("/search");
-      }).catch((error) => {
-        // handle error
-        console.log(error);
-      });
-    };
     return {
       registerUser,
-      signInWithGoogle,
       email,
       password,
       errMsg,

@@ -15,7 +15,7 @@
     >
       <q-scroll-area style="height: calc(100% - 150px); margin-top: 150px; border-right: 1px solid #ddd">
         <q-list padding>
-          <q-item to="/search" replace clickable v-ripple v-if="isLoggedIn">
+          <q-item to="/search" clickable v-ripple v-if="isLoggedIn">
             <q-item-section avatar>
               <q-icon name="search" />
             </q-item-section>
@@ -25,7 +25,7 @@
             </q-item-section>
           </q-item>
 
-          <q-item to="/register" replace clickable v-ripple v-if="!isLoggedIn">
+          <q-item to="/register"  clickable v-ripple v-if="!isLoggedIn">
             <q-item-section avatar>
               <q-icon name="how_to_reg" />
             </q-item-section>
@@ -35,7 +35,7 @@
             </q-item-section>
           </q-item>
 
-          <q-item to="/" replace clickable v-ripple v-if="!isLoggedIn">
+          <q-item to="/"  clickable v-ripple v-if="!isLoggedIn">
             <q-item-section avatar>
               <q-icon name="login" />
             </q-item-section>
@@ -45,7 +45,7 @@
             </q-item-section>
           </q-item>
 
-          <q-item to="/account" replace clickable v-ripple v-if="isLoggedIn">
+          <q-item to="/account" clickable v-ripple v-if="isLoggedIn">
             <q-item-section avatar>
               <q-icon name="account_circle" />
             </q-item-section>
