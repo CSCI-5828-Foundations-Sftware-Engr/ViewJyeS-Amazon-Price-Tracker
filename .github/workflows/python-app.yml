@@ -73,12 +73,14 @@ jobs:
           cd flask
           echo "listing files"
           ls
-          chmod 600 ./Backend/flask/CICDMODEL.pem
-          ssh -o StrictHostKeyChecking=no -i ./Backend/flask/CICDMODEL.pem ${USER_NAME}@${HOSTNAME} '
+          echo "pwd"
+          pwd
+          chmod 600 CICDMODEL.pem
+          ssh -o StrictHostKeyChecking=no -i CICDMODEL.pem ${USER_NAME}@${HOSTNAME} '
             cd /home/ubuntu/FSCBackend/ViewJyeS-Amazon-Price-Tracker/Backend/flask && echo "killing gunicorn" &&
             sudo kill $(pgrep gunicorn)
           ' && 
-          ssh -o StrictHostKeyChecking=no -i ./Backend/flask/CICDMODEL.pem ${USER_NAME}@${HOSTNAME} '
+          ssh -o StrictHostKeyChecking=no -i CICDMODEL.pem ${USER_NAME}@${HOSTNAME} '
             cd /home/ubuntu/FSCBackend/ViewJyeS-Amazon-Price-Tracker/Backend/flask && echo "changing to FSCBackend" &&
             git pull && echo "running new command" &&
             gunicorn app:app -b 0.0.0.0:5000 --daemon
