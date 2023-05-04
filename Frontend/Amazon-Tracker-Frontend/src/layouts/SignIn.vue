@@ -95,8 +95,8 @@ export default {
     const router = useRouter();
     const errMsg = ref();
     const auth = getAuth();
-    const apiUrl = "http://44.208.22.31:5000/login";
-    const apiUrl1 = "http://44.208.22.31:5000/fetchCards";
+    const apiUrl = "http://54.205.208.135:5000/login";
+    const apiUrl1 = "http://54.205.208.135:5000/fetchCards";
     const $q = useQuasar();
     const store = useStore();
 
