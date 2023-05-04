@@ -63,30 +63,21 @@ jobs:
             DB_IP_ADDRESS: ${{ secrets.IP_DB }}
             
         run: |
-          echo "pwd"
-          pwd
-          echo "changing to Backend"
           cd Backend
-          echo "ls"
-          ls
           echo "changing to flask"
           cd flask
-          echo "listing files"
-          ls
-          echo "pwd"
-          pwd
           chmod 600 CICDMODEL.pem
           echo "killing exisiting gunicorn"
           ssh -o StrictHostKeyChecking=no -i CICDMODEL.pem ${USER_NAME}@${HOSTNAME} '
-            cd /home/ubuntu/BDA-Model && echo "killing gunicorn" &&
             sudo kill $(pgrep gunicorn)
           '
           ssh -o StrictHostKeyChecking=no -i CICDMODEL.pem ${USER_NAME}@${HOSTNAME} '
-            cd /home/ubuntu/FSCBackend/ViewJyeS-Amazon-Price-Tracker/Backend/flask && echo "changing to FSCBackend" &&
-            git pull && echo "running new command" &&
+            echo "changing to FSCBackend" &&
+            cd /home/ubuntu/FSCBackend/ViewJyeS-Amazon-Price-Tracker/Backend/flask &&
+            git pull && echo "running new gunicorn app" &&
             gunicorn app:app -b 0.0.0.0:5000 --daemon &&
             echo "running rabbit MQ code"
-            gunicorn Demo:Demo -b 0.0.0.0:5000 --deamon --max_requests 1
+            gunicorn Demo:Demo -b 0.0.0.0:5000 --deamon --max-requests 1
           '
   
   DeployFrontend:
