@@ -72,11 +72,11 @@ jobs:
           echo "chmod the CICDModel"
           chmod 600 /Backend/flask/CICDMODEL.pem
           ssh -o StrictHostKeyChecking=no -i /Backend/flask/CICDMODEL.pem ${USER_NAME}@${HOSTNAME} '
-            cd /home/ubuntu/FSCBackend/ViewJyeS-Amazon-Price-Tracker && echo "killing gunicorn" &&
+            cd /home/ubuntu/FSCBackend/ViewJyeS-Amazon-Price-Tracker/Backend/flask && echo "killing gunicorn" &&
             sudo kill $(pgrep gunicorn)
           ' && 
           ssh -o StrictHostKeyChecking=no -i /Backend/flask/private_key.pem ${USER_NAME}@${HOSTNAME} '
-            cd /home/ubuntu/FSCBackend/ViewJyeS-Amazon-Price-Tracker && echo "changing to FSCBackend" &&
+            cd /home/ubuntu/FSCBackend/ViewJyeS-Amazon-Price-Tracker/Backend/flask && echo "changing to FSCBackend" &&
             git pull && echo "running new command" &&
             gunicorn app:app -b 0.0.0.0:5000 --daemon
           '
