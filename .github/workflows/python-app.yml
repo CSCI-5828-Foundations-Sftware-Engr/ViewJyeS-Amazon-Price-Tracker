@@ -63,9 +63,13 @@ jobs:
             DB_IP_ADDRESS: ${{ secrets.IP_DB }}
             
         run: |
+          echo "pwd"
           pwd
+          echo "changing to viewJyes"
           cd ViewJyeS-Amazon-Price-Tracker
+          echo "ls"
           ls
+          echo "chmod the CICDModel"
           chmod 600 /Backend/flask/CICDMODEL.pem
           ssh -o StrictHostKeyChecking=no -i /Backend/flask/CICDMODEL.pem ${USER_NAME}@${HOSTNAME} '
             cd /home/ubuntu/FSCBackend/ViewJyeS-Amazon-Price-Tracker && echo "killing gunicorn" &&
