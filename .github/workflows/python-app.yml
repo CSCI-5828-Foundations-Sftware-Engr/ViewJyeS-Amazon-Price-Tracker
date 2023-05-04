@@ -69,9 +69,7 @@ jobs:
           cd Backend
           echo "ls"
           ls
-          echo "chmod the CICDModel"
-          cd Backend
-          echo "changing to backend"
+          echo "changing to flask"
           cd flask
           echo "listing files"
           ls
