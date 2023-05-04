@@ -65,8 +65,8 @@ jobs:
         run: |
           echo "pwd"
           pwd
-          echo "changing to viewJyes"
-          cd ViewJyeS-Amazon-Price-Tracker
+          echo "changing to Backend"
+          cd Backend
           echo "ls"
           ls
           echo "chmod the CICDModel"
