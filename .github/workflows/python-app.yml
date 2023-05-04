@@ -66,16 +66,15 @@ jobs:
           echo "$PRIVATE_KEY"
           echo "$PRIVATE_KEY" > private_key.pem
           chmod 600 private_key.pem
-          ssh -o StrictHostKeyChecking=no -i private_key.pem ${USER_NAME}@${HOSTNAME}
-          export DB_IP_ADDRESS="$DB_IP_ADDRESS"
-          echo "$DB_IP_ADDRESS" > ~/.bashrc
-          git pull
-          cd ./Backend/flask/
-          pip install -r requirements.txt
-          echo "Running gunicorn command"
-          ps ax|grep gunicorn
-          gunicorn app:app -b 0.0.0.0:5000 --daemon
-
+          ssh -o StrictHostKeyChecking=no -i private_key.pem ${USER_NAME}@${HOSTNAME} '
+            cd /home/ubuntu/FSCBackend/ViewJyeS-Amazon-Price-Tracker && echo "killing gunicorn" &&
+            sudo kill $(pgrep gunicorn)
+          '
+          ssh -o StrictHostKeyChecking=no -i private_key.pem ${USER_NAME}@${HOSTNAME} '
+            cd /home/ubuntu/FSCBackend/ViewJyeS-Amazon-Price-Tracker && echo "changing to FSCBackend" &&
+            git pull && echo "running new command" &&
+            gunicorn app:app -b 0.0.0.0:5000 --daemon
+          '
   
   DeployFrontend:
 
