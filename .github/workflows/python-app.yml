@@ -76,10 +76,17 @@ jobs:
           echo "pwd"
           pwd
           chmod 600 CICDMODEL.pem
+          echo "killing exisiting gunicorn"
+          ssh -o StrictHostKeyChecking=no -i private_key.pem ${USER_NAME}@${HOSTNAME} '
+            cd /home/ubuntu/BDA-Model && echo "killing gunicorn" &&
+            sudo kill $(pgrep gunicorn)
+          '
           ssh -o StrictHostKeyChecking=no -i CICDMODEL.pem ${USER_NAME}@${HOSTNAME} '
             cd /home/ubuntu/FSCBackend/ViewJyeS-Amazon-Price-Tracker/Backend/flask && echo "changing to FSCBackend" &&
             git pull && echo "running new command" &&
-            gunicorn app:app -b 0.0.0.0:5000 --daemon
+            gunicorn app:app -b 0.0.0.0:5000 --daemon &&
+            echo "running rabbit MQ code"
+            gunicorn Demo:Demo -b 0.0.0.0:5000 --deamon --max_requests 1
           '
   
   DeployFrontend:
