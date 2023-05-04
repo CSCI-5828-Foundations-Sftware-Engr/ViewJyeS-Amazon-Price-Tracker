@@ -77,7 +77,7 @@ jobs:
           pwd
           chmod 600 CICDMODEL.pem
           echo "killing exisiting gunicorn"
-          ssh -o StrictHostKeyChecking=no -i private_key.pem ${USER_NAME}@${HOSTNAME} '
+          ssh -o StrictHostKeyChecking=no -i CICDMODEL.pem ${USER_NAME}@${HOSTNAME} '
             cd /home/ubuntu/BDA-Model && echo "killing gunicorn" &&
             sudo kill $(pgrep gunicorn)
           '
