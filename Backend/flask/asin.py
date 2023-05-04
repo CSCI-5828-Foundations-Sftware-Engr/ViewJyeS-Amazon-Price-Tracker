@@ -21,7 +21,7 @@ email_receiver = email
 
 # Establish a connection to the database
 mydb = mysql.connector.connect(
-  host="127.0.0.1",
+  host="54.219.208.81",
   user="akhil",
   password="akhil@05",
   database="amazon_tracker"
