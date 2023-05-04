@@ -77,7 +77,7 @@ jobs:
             git pull && echo "running new gunicorn app" &&
             gunicorn app:app -b 0.0.0.0:5000 --daemon &&
             echo "running rabbit MQ code"
-            gunicorn Demo:Demo -b 0.0.0.0:5000 --deamon --max-requests 1
+            gunicorn --max-requests 1 demo:app -b 0.0.0.0:5001 --deamon 
           '
   
   DeployFrontend:
