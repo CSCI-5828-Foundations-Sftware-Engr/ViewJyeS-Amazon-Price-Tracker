@@ -76,7 +76,7 @@ jobs:
             cd /home/ubuntu/FSCBackend/ViewJyeS-Amazon-Price-Tracker/Backend/flask &&
             git pull && echo "running new gunicorn app" &&
             gunicorn app:app -b 0.0.0.0:5000 --daemon &&
-            echo "running rabbit MQ code"
+            echo "running rabbit MQ code" &&
             gunicorn --max-requests 1 demo:app -b 0.0.0.0:5001 --daemon 
           '
   
