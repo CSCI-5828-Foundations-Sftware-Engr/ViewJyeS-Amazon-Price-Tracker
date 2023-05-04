@@ -165,9 +165,9 @@ def track():
         cron.write()
         print('Cron job created')
 
-        subprocess.Popen(['python', 'rabbitmq.py', asin], stdout=f)
+        subprocess.Popen(['python', 'rabbitmq.py', asin])
 
-        subprocess.Popen(['python', 'rabbitmq_consumer.py'], stdout=f)
+        subprocess.Popen(['python', 'rabbitmq_consumer.py'])
         
         return jsonify({'email':email,'positive': 100,'negative': 0,'notification_status': enableNotification ,'productName':product_name,'asinServer': asin,
                         'imageUrl': image_url, 'currentPrice': current_price, 'productLink': link})
