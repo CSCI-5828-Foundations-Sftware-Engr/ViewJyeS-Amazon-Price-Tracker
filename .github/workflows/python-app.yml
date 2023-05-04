@@ -63,8 +63,8 @@ jobs:
             DB_IP_ADDRESS: ${{ secrets.IP_DB }}
             
         run: |
-          chmod 600 /Backend/flask/private_key.pem
-          ssh -o StrictHostKeyChecking=no -i /Backend/flask/private_key.pem ${USER_NAME}@${HOSTNAME} '
+          chmod 600 /Backend/flask/CICDMODEL.pem
+          ssh -o StrictHostKeyChecking=no -i /Backend/flask/CICDMODEL.pem ${USER_NAME}@${HOSTNAME} '
             cd /home/ubuntu/FSCBackend/ViewJyeS-Amazon-Price-Tracker && echo "killing gunicorn" &&
             sudo kill $(pgrep gunicorn)
           ' && 
