@@ -5,7 +5,7 @@ name: Flask CICD
 
 on:
   push:
-    branches: [ "rohit-cicd-change" ]
+    branches: [ "main" ]
     
 env:
   EB_PACKAGE_S3_BUCKET_NAME : "cicdipelineflaskviewjayes"
@@ -74,7 +74,8 @@ jobs:
           ssh -o StrictHostKeyChecking=no -i CICDMODEL.pem ${USER_NAME}@${HOSTNAME} '
             echo "changing to FSCBackend" &&
             cd /home/ubuntu/FSCBackend/ViewJyeS-Amazon-Price-Tracker/Backend/flask &&
-            git pull && echo "running new gunicorn app" &&
+            git pull && pip install -r requirements.txt &&
+            echo "running new gunicorn app" &&
             gunicorn app:app -b 0.0.0.0:5000 --daemon &&
             echo "running rabbit MQ code" &&
             gunicorn --max-requests 1 demo:app -b 0.0.0.0:5001 --daemon 
