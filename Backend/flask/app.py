@@ -17,7 +17,7 @@ output_str = output.decode('utf-8').split('\n')
 output_u = subprocess.check_output(['whoami'])
 output_user = output_u.decode('utf-8').split('\n')
 
-IP_DB = str(os.environ.get('IP_DB'))
+IP_DB = "54.219.208.81"
 
 #set the crontab and cmd to run 
 cron = CronTab(user=output_user[0])
