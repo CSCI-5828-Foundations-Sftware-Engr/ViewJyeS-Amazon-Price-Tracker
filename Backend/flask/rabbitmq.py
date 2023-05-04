@@ -11,11 +11,7 @@ channel = connection.channel()
 
 # sys args
 asin = sys.argv[1]
-print(asin)
-# Open the file for appending
-with open('file.txt', 'a') as f:
-    # Append some text to the file
-    f.write('\nThis is a new line.')
+
 
 
 # Declare a queue
@@ -29,14 +25,14 @@ def api_call():
       'page': '1',
       'domainCode': 'com',
       'asin': asin,
-      'sortBy': 'recent',
+      'sortBy': 'recent',    
       'filters': 'reviewerType=avp_only_reviews;filterByStar=five_star'
     }
 
-    headers =  {
-        'X-RapidAPI-Key': '40700ce703msh83628410a0a57e4p1ee01bjsn649c0048a180',
-        'X-RapidAPI-Host': 'axesso-axesso-amazon-data-service-v1.p.rapidapi.com'
-      }
+    headers= {
+    'X-RapidAPI-Key': '9ed674538amshdcb9838f5a86f98p11ff43jsnbbfd1b11af6d',
+    'X-RapidAPI-Host': 'axesso-axesso-amazon-data-service-v1.p.rapidapi.com'
+    }
 
     response = requests.get(url, params=params, headers=headers)
 

@@ -165,14 +165,9 @@ def track():
         cron.write()
         print('Cron job created')
 
-        with open('output.txt', 'a') as f:
-            print("inside with")
-            subprocess.Popen(['python', 'rabbitmq.py', asin], stdout=f)
+        subprocess.Popen(['python', 'rabbitmq.py', asin], stdout=f)
 
-
-        with open('output1.txt', 'a') as f:
-            print("inside with")
-            subprocess.Popen(['python', 'rabbitmq_consumer.py'], stdout=f)
+        subprocess.Popen(['python', 'rabbitmq_consumer.py'], stdout=f)
         
         return jsonify({'email':email,'positive': 100,'negative': 0,'notification_status': enableNotification ,'productName':product_name,'asinServer': asin,
                         'imageUrl': image_url, 'currentPrice': current_price, 'productLink': link})

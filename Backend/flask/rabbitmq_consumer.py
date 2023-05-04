@@ -28,9 +28,8 @@ import Predict
 def on_message_received (ch, method, properties, body):
     data1 = body.decode()
     reviews_list = ast.literal_eval(data1)
-    with open('reviews.csv', mode='w') as file:
+    with open('reviews.csv', mode='w', encoding="utf-8") as file:
         # Create a CSV writer object
-        reviews = ["This is a great product!", "I love this item!", "The quality is outstanding."]
         writer = csv.writer(file)
         # Write the header row
         writer.writerow(['Reviews','Sentiment'])
