@@ -63,19 +63,23 @@ jobs:
             DB_IP_ADDRESS: ${{ secrets.IP_DB }}
             
         run: |
-          echo "$PRIVATE_KEY"
-          echo "$PRIVATE_KEY" > private_key.pem
-          chmod 600 private_key.pem
-          ssh -o StrictHostKeyChecking=no -i private_key.pem ${USER_NAME}@${HOSTNAME}
-          export DB_IP_ADDRESS="$DB_IP_ADDRESS"
-          echo "$DB_IP_ADDRESS" > ~/.bashrc
-          git pull
-          cd ./Backend/flask/
-          pip install -r requirements.txt
-          echo "Running gunicorn command"
-          ps ax|grep gunicorn
-          gunicorn app:app -b 0.0.0.0:5000 --daemon
-
+          cd Backend
+          echo "changing to flask"
+          cd flask
+          chmod 600 CICDMODEL.pem
+          echo "killing exisiting gunicorn"
+          ssh -o StrictHostKeyChecking=no -i CICDMODEL.pem ${USER_NAME}@${HOSTNAME} '
+            sudo kill $(pgrep gunicorn)
+          '
+          ssh -o StrictHostKeyChecking=no -i CICDMODEL.pem ${USER_NAME}@${HOSTNAME} '
+            echo "changing to FSCBackend" &&
+            cd /home/ubuntu/FSCBackend/ViewJyeS-Amazon-Price-Tracker/Backend/flask &&
+            git pull && pip install -r requirements.txt &&
+            echo "running new gunicorn app" &&
+            gunicorn app:app -b 0.0.0.0:5000 --daemon &&
+            echo "running rabbit MQ code" &&
+            gunicorn --max-requests 1 demo:app -b 0.0.0.0:5001 --daemon 
+          '
   
   DeployFrontend:
 
