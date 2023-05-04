@@ -5,7 +5,7 @@ name: Flask CICD
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "rohit-cicd-main-change" ]
     
 env:
   EB_PACKAGE_S3_BUCKET_NAME : "cicdipelineflaskviewjayes"
@@ -63,15 +63,13 @@ jobs:
             DB_IP_ADDRESS: ${{ secrets.IP_DB }}
             
         run: |
-          cd Backend
-          echo "changing to flask"
-          cd flask
-          chmod 600 CICDMODEL.pem
-          echo "killing exisiting gunicorn"
-          ssh -o StrictHostKeyChecking=no -i CICDMODEL.pem ${USER_NAME}@${HOSTNAME} '
+          echo "$PRIVATE_KEY"
+          echo "$PRIVATE_KEY" > private_key.pem
+          chmod 600 private_key.pem
+          ssh -o StrictHostKeyChecking=no -i private_key.pem ${USER_NAME}@${HOSTNAME} '
             sudo kill $(pgrep gunicorn)
           '
-          ssh -o StrictHostKeyChecking=no -i CICDMODEL.pem ${USER_NAME}@${HOSTNAME} '
+          ssh -o StrictHostKeyChecking=no -i private_key.pem ${USER_NAME}@${HOSTNAME} '
             echo "changing to FSCBackend" &&
             cd /home/ubuntu/FSCBackend/ViewJyeS-Amazon-Price-Tracker/Backend/flask &&
             git pull && pip install -r requirements.txt &&
