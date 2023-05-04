@@ -8,6 +8,7 @@ import requests
 import json
 import os
 import subprocess
+from prometheus_flask_exporter import PrometheusMetrics
 
 
 
@@ -32,6 +33,7 @@ mydb = mysql.connector.connect(
 
 
 app = Flask(__name__)
+metrics = PrometheusMetrics(app)
 CORS(app)
 
 @app.route("/")

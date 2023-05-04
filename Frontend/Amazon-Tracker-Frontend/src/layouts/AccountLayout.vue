@@ -127,8 +127,8 @@ export default {
     const redirectFlag = ref(false);
     const store = useStore();
     let card_details = ref([]);
-    const apiRemove = "http://54.205.208.135:5000/remove";
-    const apiToggle = "http://54.205.208.135:5000/toggleNotification";
+    const apiRemove = "http://34.203.234.126:5000/remove";
+    const apiToggle = "http://34.203.234.126:5000/toggleNotification";
     let ASIN = ref("");
     let pop1 = ref(false);
     let pop2 = ref(false);
@@ -225,7 +225,7 @@ export default {
   methods: {
     async getData(tog) {
       console.log("in this even called")
-      axios.get('http://54.205.208.135:5001/add')
+      axios.get('http://34.203.234.126:5001/add')
         .then((response) => {
           console.log('Data:', response.data);
           let chartData = response.data;

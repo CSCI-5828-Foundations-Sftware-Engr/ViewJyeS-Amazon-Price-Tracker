@@ -61,7 +61,7 @@ export default {
     const loading = ref([
       false
     ]);
-    const apiUrl = "http://54.205.208.135:5000/track";
+    const apiUrl = "http://34.203.234.126:5000/track";
     const router = useRouter();
     const priceDecrease = ref(true);
     const everyHour = ref(false);
