@@ -57,7 +57,7 @@ export default {
     const router = useRouter();
     const auth = getAuth();
     const errMsg = ref();
-    const apiUrl = "http://127.0.0.1:5000/register";
+    const apiUrl = "http://44.208.22.31:5000/register";
     const store = useStore();
     const registerUser = () => {
       console.log("kaha hoo")
