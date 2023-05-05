@@ -35,5 +35,5 @@ For the backend system we have done the following testing.
 [Production Monitoring](http://34.203.234.126:9090/targets)
 - The above link will take you to the prometheus page on the EC2 machine, We have used grafana on local machine to connect to prometheus and monitor the data. We tracked the total request parameter on Grafana, also we used AWS Cloudwatch to metrics on EC2 and S3 bucket.
 
-[Integration Testing](https://github.com/CSCI-5828-Foundations-Sftware-Engr/ViewJyeS-Amazon-Price-Tracker/tree/main/Frontend/Amazon-Tracker-Frontend/test/jest)
+[Integration Testing and Acceptance Testing](https://github.com/CSCI-5828-Foundations-Sftware-Engr/ViewJyeS-Amazon-Price-Tracker/tree/main/Frontend/Amazon-Tracker-Frontend/test/jest)
 - For the Frontend we tested the individual component, and all the files are placed in the __test__ folder, Also along side this we tried writing test cases that mimick user behavior.
