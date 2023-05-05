@@ -32,7 +32,7 @@ For the backend system we have done the following testing.
 [Event Collabraion/ Messaging Protocol](https://github.com/CSCI-5828-Foundations-Sftware-Engr/ViewJyeS-Amazon-Price-Tracker/tree/main/Backend/flask)
 - Refer to the rabbitmq and rabbitmq_consumer python file which handles all the message queue related data handling.
 
-[Production Monitoring](http://34.203.234.126:9090)
+[Production Monitoring](http://34.203.234.126:9090/targets)
 - The above link will take you to the prometheus page on the EC2 machine, We have used grafana on local machine to connect to prometheus and monitor the data. We tracked the total request parameter on Grafana, also we used AWS Cloudwatch to metrics on EC2 and S3 bucket.
 
 [Integration Testing](https://github.com/CSCI-5828-Foundations-Sftware-Engr/ViewJyeS-Amazon-Price-Tracker/tree/main/Frontend/Amazon-Tracker-Frontend/test/jest)
